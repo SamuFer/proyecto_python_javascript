@@ -1,2 +1,4 @@
 # proyecto_python_javascript
 creacion de un mini-proyecto con backend y frontend con los lenguajes de python y javascript, tambien uso de dos framework y una base de datos. PASO A PASO......
+
+provando mi primer push
