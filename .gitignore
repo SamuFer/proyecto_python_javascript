@@ -1,6 +1,6 @@
 # Archivos de python
 # Directorios del entorno virtual creado con venv
-venv/
+.venv/
 
 # Archivos de bytecode de Python 
 __pycache__/
