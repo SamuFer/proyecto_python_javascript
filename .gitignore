@@ -1,0 +1,23 @@
+# Archivos de python
+# Directorios del entorno virtual creado con venv
+venv/
+
+# Archivos de bytecode de Python 
+__pycache__/
+
+# Archivos compilados 
+*.pyc
+
+# Archivos de la base de datos SQLite
+# La base de datos, que es un archivo `.json` en tu caso, también se debería ignorar.
+# Si estás simulando la base de datos con `db.json`, ignóralo para que cada desarrollador tenga su propia copia local.
+backend/db.json
+
+# Archivos del editor
+# Si usas editores como VS Code, ignora la carpeta de configuracion
+.vscode/
+
+# Archivos de sistema
+# Archivos de sistema generados por el sistema operativo
+# Windows
+Thumbs.db 
