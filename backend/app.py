@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, render_template, abort
 import json
+import os
 
 app = Flask(__name__)
 # Configuración para servir archivos estáticos (CSS/JS) y templates (HTML)
@@ -19,6 +20,8 @@ DB_FILE = 'db.json'
 # --- Funciones para manejar la "base de datos" (archivo JSON) ---
 def load_tasks():
     """Carga las tareas desde el archivo JSON."""
+    if not os.path.exists(DB_FILE):
+        return []
     try:
         with open(DB_FILE, 'r') as f:
             return json.load(f)
@@ -45,18 +48,38 @@ def get_tasks():
 @app.route('/api/tasks', methods=['POST'])
 def create_task():
     """Crea una nueva tarea."""
-    if not request.json or 'title' not in request.json:
-        abort(400)  # Bad Request si no se envía JSON o falta el 'title'
+    if not request.json or 'tarea' not in request.json:
+        abort(400)  # Bad Request si no se envía JSON o falta el 'tarea'
     tasks = load_tasks()
     new_id = max([t['id'] for t in tasks]) + 1 if tasks else 1
     new_task = {
         'id': new_id,
-        'title': request.json['title'],
-        'completed': False
+        'tarea': request.json['tarea'],
+        'completada': False
     }
     tasks.append(new_task)
     save_tasks(tasks)
     return jsonify(new_task), 201  # 201: Created
+
+
+@app.route('/api/tasks/<int:task_id>', methods=['PUT'])
+def update_task(task_id):
+    """Actualiza una tarea por su ID."""
+    if not request.json:
+        abort(400) # Bad Request si no se envía JSON
+
+    tasks = load_tasks()
+    task = next((t for t in tasks if t['id'] == task_id), None)
+    if not task:
+        abort(404) # Not Found si no se encuentra la tarea
+
+    # Actualiza el estado 'completada' si se recibe en la solicitud
+    if 'completada' in request.json:
+        task['completada'] = request.json['completada']
+
+    save_tasks(tasks)
+    return jsonify(task)
+
 
 @app.route('/api/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
@@ -71,4 +94,8 @@ def delete_task(task_id):
 
 # --- Ejecución del servidor ---
 if __name__ == '__main__':
+    # Crea el archivo JSON si no existe
+    if not os.path.exists(DB_FILE):
+        os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
+        save_tasks([])
     app.run(debug=True)
